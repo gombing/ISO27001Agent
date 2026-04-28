@@ -1,0 +1,18 @@
+# Client engagement documents — never commit client data
+engagements/*
+!engagements/.gitkeep
+
+# Session checkpoints and health reports contain client context
+engagements/.sessions/
+engagements/.health/
+
+# Generated policy documents
+engagements/policies/
+
+# macOS
+.DS_Store
+
+# Editor
+.vscode/
+*.swp
+*.swo
