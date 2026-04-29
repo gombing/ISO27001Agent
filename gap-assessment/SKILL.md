@@ -1,4 +1,5 @@
 ---
+version: 1.0.0
 name: gap-assessment
 description: |
   ISO 27001:2022 Clause Gap Assessment — systematic walkthrough of all mandatory

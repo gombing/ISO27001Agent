@@ -1,4 +1,5 @@
 ---
+version: 1.0.0
 name: soa
 description: |
   ISO 27001:2022 Statement of Applicability (SoA) — Clause 6.1.3(d) compliant.

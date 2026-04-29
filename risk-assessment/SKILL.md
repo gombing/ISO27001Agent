@@ -1,4 +1,5 @@
 ---
+version: 1.0.0
 name: risk-assessment
 description: |
   ISO 27001:2022 Information Security Risk Assessment — Clause 6.1.2 compliant.

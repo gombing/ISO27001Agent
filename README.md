@@ -8,6 +8,17 @@ writing auditor-ready output files.
 
 ---
 
+## Installation
+
+```bash
+git clone --depth 1 https://github.com/gombing/ISO27001Agent.git ~/.claude/skills/iso27001agent \
+  && ~/.claude/skills/iso27001agent/setup.sh
+```
+
+That's it. Skills are registered globally — open Claude Code in any directory and run `/interview` to start.
+
+---
+
 ## What It Does
 
 You type a skill command (e.g. `/interview`). The skill loads your client context
@@ -37,19 +48,19 @@ The full lifecycle produces:
 
 ---
 
-## Installation
+## How It Works After Install
 
-Clone the repo and run Claude Code from inside it:
+Skills are registered globally in `~/.claude/CLAUDE.md`.
+Open Claude Code in any directory and the skills are available immediately.
+
+Engagement documents are written to `./engagements/` in your current working directory —
+so create a folder per client to keep data separate:
 
 ```bash
-git clone https://github.com/[your-username]/ISO27001AGENT.git
-cd ISO27001AGENT
+mkdir acme-corp && cd acme-corp
 claude
+# then run /interview
 ```
-
-That's it. The `CLAUDE.md` at the root registers all skills automatically.
-Your engagement documents will be written to `./engagements/` — which is gitignored,
-so client data stays on your machine.
 
 ---
 
@@ -125,12 +136,11 @@ produced, outstanding actions, and the next skill to run.
 
 ## Multiple Clients
 
-Run a separate clone (or branch) per client. Each clone has its own `./engagements/`
-directory with that client's documents.
+Create a folder per client. Each folder has its own `./engagements/` directory.
 
 ```bash
-git clone https://github.com/[your-username]/ISO27001AGENT.git client-acme
-git clone https://github.com/[your-username]/ISO27001AGENT.git client-globex
+mkdir ~/clients/acme-corp && cd ~/clients/acme-corp && claude
+mkdir ~/clients/globex    && cd ~/clients/globex    && claude
 ```
 
 ---

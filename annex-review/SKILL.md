@@ -1,4 +1,5 @@
 ---
+version: 1.0.0
 name: annex-review
 description: |
   ISO 27001:2022 Annex A Control Review — systematic walkthrough of all 93 controls

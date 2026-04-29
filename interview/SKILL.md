@@ -1,4 +1,5 @@
 ---
+version: 1.0.0
 name: interview
 description: |
   ISO 27001 Client Intake Interview — structured diagnostic Q&A for GRC consulting engagements.

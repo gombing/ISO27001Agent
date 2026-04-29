@@ -1,4 +1,5 @@
 ---
+version: 1.0.0
 name: internal-audit
 description: |
   ISO 27001:2022 Internal Audit — Clause 9.2 compliant.

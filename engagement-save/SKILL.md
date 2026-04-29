@@ -1,4 +1,5 @@
 ---
+version: 1.0.0
 name: engagement-save
 description: |
   ISO27001AGENT Session Checkpoint — saves the full state of an active consulting

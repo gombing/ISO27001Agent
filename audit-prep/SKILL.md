@@ -1,4 +1,5 @@
 ---
+version: 1.0.0
 name: audit-prep
 description: |
   ISO 27001:2022 Audit Readiness — Stage 1 and Stage 2 preparation checklist.

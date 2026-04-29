@@ -4,6 +4,30 @@ AI-assisted ISO 27001:2022 consulting toolkit. Each skill is a structured workfl
 that walks you through one phase of the ISO 27001 lifecycle — from client intake
 through to audit readiness.
 
+**Current version:** 1.0.0
+
+---
+
+## Installation
+
+One command installs all 14 skills:
+
+```bash
+git clone --depth 1 https://github.com/gombing/ISO27001Agent.git ISO27001AGENT && ISO27001AGENT/setup.sh
+```
+
+`setup.sh` does two things:
+
+1. Creates a symlink for each skill in `~/.claude/skills/[name]/SKILL.md` so Claude Code
+   discovers them natively. Each skill appears as a named slash command.
+2. Appends the ISO27001AGENT routing block to `~/.claude/CLAUDE.md` so skill invocations
+   trigger automatically when your input matches a known trigger phrase.
+
+To uninstall: run `./uninstall.sh` — removes all symlinks and the routing block.
+Your `./engagements/` documents are never touched.
+
+To reinstall after an update: `git pull && ./setup.sh` (idempotent — safe to re-run).
+
 ---
 
 ## How It Works
@@ -133,7 +157,7 @@ and identifies which controls are the highest priority to remediate.
 ### `/risk-assessment`
 
 **Purpose:** Identifies information security risks across six asset categories, scores
-them on a 5×5 likelihood × impact matrix, and produces a risk register. Red and Amber
+them on a 5x5 likelihood x impact matrix, and produces a risk register. Red and Amber
 control gaps from the annex review are pre-suggested as risk scenarios.
 
 **When to use:**
@@ -142,7 +166,7 @@ control gaps from the annex review are pre-suggested as risk scenarios.
 - When re-assessing risks after a significant change (new system, incident, acquisition)
 
 **What you'll be asked:**
-- Likelihood and impact scores for each suggested risk (1–5)
+- Likelihood and impact scores for each suggested risk (1-5)
 - Whether to add risks not covered by the control gaps
 - The organization's risk appetite (accept Low only / accept Low+Medium / accept up to High)
 
@@ -260,13 +284,13 @@ needed, then produces fully client-populated templates (no blank placeholders in
 ### `/internal-audit`
 
 **Purpose:** Plans and facilitates the internal audit — the formal check that the ISMS
-conforms to ISO 27001:2022 before the certification body arrives. Covers Clauses 4–10
+conforms to ISO 27001:2022 before the certification body arrives. Covers Clauses 4-10
 and a sample of Annex A controls. Classifies findings as Major NC, Minor NC, Observation,
 or Conformity.
 
 **When to use:**
 - After the roadmap Phase 2 exit gate (80%+ of controls implemented)
-- At least 4–6 weeks before the Stage 1 certification audit
+- At least 4-6 weeks before the Stage 1 certification audit
 - Annually during the surveillance cycle
 - After a significant incident or major change to the ISMS
 
@@ -319,7 +343,7 @@ and produces a prioritized punch list of what must be resolved before the audito
 
 **When to use:**
 - After `/management-review` — all lifecycle documents must exist before audit prep
-- 4–8 weeks before the Stage 1 audit date
+- 4-8 weeks before the Stage 1 audit date
 - When a client asks "are we ready?"
 - After closing corrective actions from the internal audit
 
@@ -363,7 +387,7 @@ weighted overall RAG verdict with the top 3 actions to improve it.
 | D5 Roadmap Adherence | Current phase vs target date | 5% |
 | D6 IS Objectives | % of defined objectives met or on track | 5% |
 
-**Scores:** GREEN (80–100) / AMBER (50–79) / RED (0–49)
+**Scores:** GREEN (80-100) / AMBER (50-79) / RED (0-49)
 
 **Output:** `./engagements/.health/YYYY-MM-DD_HHMMSS-[client]-isms-health.md`
 Trend comparison is shown if a prior health report exists.
@@ -421,6 +445,102 @@ written by `/engagement-save`.
 
 ---
 
+## Shared Infrastructure
+
+These files govern how every skill behaves. You do not invoke them directly — they run
+in the background on every skill execution.
+
+---
+
+### `lib/PREAMBLE.md` — Context loader + shared standards
+
+Every skill begins by running the PREAMBLE. It does two things:
+
+**1. Context loader.** Scans `./engagements/` for the most recent engagement brief and
+extracts CLIENT, SCOPE, SPONSOR, CERT_TARGET, URGENCY. Every skill gets this context
+automatically — no skill ever asks "which client are we working with?"
+
+**2. Shared standards.** All skills follow the same voice and completion protocol:
+
+**Voice:** Direct, evidence-based, consultant-to-consultant. Name the clause, control,
+document, and audit implication. No filler. No AI vocabulary (robust, comprehensive,
+nuanced, holistic, leverage, synergy, best-in-class). Short sentences. End with what
+the client or auditor needs to do. The consultant has context you do not — present
+findings clearly and let them decide.
+
+**Completion Status Protocol:** Every skill exits with one of four statuses:
+
+| Status | When to use |
+|---|---|
+| `STATUS: DONE` | Skill completed, all mandatory items covered, document written |
+| `STATUS: DONE_WITH_CONCERNS` | Completed, but items need attention before the audit |
+| `STATUS: BLOCKED` | Cannot proceed — state exact blocker and what was attempted |
+| `STATUS: NEEDS_CONTEXT` | Missing information only the consultant can provide |
+
+`DONE_WITH_CONCERNS` format:
+```
+STATUS: DONE_WITH_CONCERNS
+Document written: [path]
+Concerns:
+  1. [concern — audit implication]
+  2. [concern — audit implication]
+Recommended action: [what to do before Stage 1]
+```
+
+`BLOCKED` format:
+```
+STATUS: BLOCKED
+Blocker: [what is missing or unresolved]
+Attempted: [what was tried]
+Recommendation: [which skill to run or action to take first]
+```
+
+---
+
+### `ETHOS.md` — Consulting philosophy
+
+Six principles that govern every skill's decision logic:
+
+1. **Auditor-Defensible or Nothing** — if it would not survive a Stage 2 audit, the skill
+   does not produce it. Partial output with explicit gaps beats a complete document built
+   on assumptions.
+
+2. **Pre-Populate, Don't Re-Ask** — prior documents are always read before asking the
+   consultant anything. A question that can be answered from an existing document is not
+   asked.
+
+3. **The Certification Gap Is the Gap** — compliance is measured against what an accredited
+   certification body auditor would accept. Internal standards, client preferences, and
+   "industry best practice" are secondary.
+
+4. **Completeness Is Cheap** — the output document covers everything required by the
+   clause or control. The consultant edits down; the agent does not thin out.
+
+5. **Scope Is a Decision, Not a Default** — scope inclusions and exclusions are documented
+   with justification, not assumed. Every exclusion in the SoA requires a written rationale.
+
+6. **The Consultant Decides** — the agent presents findings, options, and recommendations.
+   The consultant makes the call. The agent never treats a pre-populated value as confirmed
+   without the consultant having seen it.
+
+---
+
+### `CHANGELOG.md` — Version history
+
+Tracks what changed between versions. Check this when upgrading to understand what new
+skills or capabilities were added.
+
+Current release: v1.0.0 (2026-04-28) — full 14-skill toolkit, initial release.
+
+---
+
+### `VERSION`
+
+Single-line file containing the current version string (`1.0.0`). Used by `setup.sh` in
+the install confirmation message.
+
+---
+
 ## Quick Decision Guide
 
 | Situation | Run this skill |
@@ -465,6 +585,11 @@ The `/management-review` skill covers all 10 mandatory inputs — do not shortcu
 Each conversation starts fresh. Run `/engagement-save` before you close the chat.
 A five-minute save prevents a thirty-minute reconstruct next session.
 
+**Ignoring DONE_WITH_CONCERNS.**
+If a skill exits with `STATUS: DONE_WITH_CONCERNS`, read the concerns list before moving
+on. These are audit risks, not warnings. Each one has an audit implication — address them
+before Stage 1.
+
 ---
 
 ## Output Directory Structure
@@ -494,6 +619,51 @@ engagements/
     └── YYYY-MM-DD_HHMMSS-[client]-isms-health.md
 ```
 
+The `engagements/` directory is excluded from git by `.gitignore`. Client data never
+leaves your machine unless you explicitly commit and push it.
+
+---
+
+## Repository Structure
+
+```
+ISO27001AGENT/
+├── setup.sh                    — install: symlinks + CLAUDE.md routing
+├── uninstall.sh                — remove symlinks and routing block
+├── VERSION                     — current version string (1.0.0)
+├── CHANGELOG.md                — version history
+├── ETHOS.md                    — consulting philosophy (6 principles)
+├── LICENSE                     — MIT
+├── README.md                   — quick start
+├── .gitignore                  — excludes engagements/* (client data)
+├── engagements/
+│   └── .gitkeep                — ensures directory exists after fresh clone
+├── lib/
+│   └── PREAMBLE.md             — shared context loader, voice, completion protocol
+├── docs/
+│   └── guide.md                — this file
+└── [skill-name]/
+    └── SKILL.md                — one directory per skill (14 total)
+        interview/
+        gap-assessment/
+        annex-review/
+        risk-assessment/
+        risk-treatment/
+        soa/
+        roadmap/
+        policy-gen/
+        internal-audit/
+        management-review/
+        audit-prep/
+        isms-health/
+        engagement-save/
+        engagement-restore/
+```
+
+Each `SKILL.md` carries YAML frontmatter with `version: 1.0.0`, `name`, `description`,
+`allowed-tools`, and `triggers`. The triggers list is what `~/.claude/CLAUDE.md` uses
+to auto-invoke the skill without requiring the exact slash command.
+
 ---
 
 ## ISO 27001:2022 Clause Coverage
@@ -511,10 +681,10 @@ engagements/
 | 6.1.2 | Risk assessment | `/risk-assessment` |
 | 6.1.3 | Risk treatment + SoA | `/risk-treatment`, `/soa` |
 | 6.2 | IS objectives | `/gap-assessment`, `/roadmap` |
-| 7.1–7.5 | Support (resources, competence, awareness, documented info) | `/gap-assessment`, `/policy-gen` |
-| 8.1–8.3 | Operational planning | `/roadmap`, `/gap-assessment` |
+| 7.1-7.5 | Support (resources, competence, awareness, documented info) | `/gap-assessment`, `/policy-gen` |
+| 8.1-8.3 | Operational planning | `/roadmap`, `/gap-assessment` |
 | 9.1 | Monitoring and measurement | `/gap-assessment`, `/isms-health` |
 | 9.2 | Internal audit | `/internal-audit` |
 | 9.3 | Management review | `/management-review` |
-| 10.1–10.2 | Improvement and corrective action | `/internal-audit`, `/audit-prep` |
-| Annex A | 93 controls across A.5–A.8 | `/annex-review`, `/soa` |
+| 10.1-10.2 | Improvement and corrective action | `/internal-audit`, `/audit-prep` |
+| Annex A | 93 controls across A.5-A.8 | `/annex-review`, `/soa` |

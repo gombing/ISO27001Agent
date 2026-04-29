@@ -9,6 +9,9 @@ engagements/.health/
 # Generated policy documents
 engagements/policies/
 
+# Local reference templates — large files, not part of distributed toolkit
+Reffrence/
+
 # macOS
 .DS_Store
 

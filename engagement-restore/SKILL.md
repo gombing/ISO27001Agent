@@ -1,4 +1,5 @@
 ---
+version: 1.0.0
 name: engagement-restore
 description: |
   ISO27001AGENT Session Restore — loads the most recent engagement checkpoint and

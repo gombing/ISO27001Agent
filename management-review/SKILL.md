@@ -1,4 +1,5 @@
 ---
+version: 1.0.0
 name: management-review
 description: |
   ISO 27001:2022 Management Review — Clause 9.3 compliant.

@@ -1,4 +1,5 @@
 ---
+version: 1.0.0
 name: isms-health
 description: |
   ISO27001AGENT ISMS Health Dashboard — a real-time snapshot of the ISMS across

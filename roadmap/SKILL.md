@@ -1,4 +1,5 @@
 ---
+version: 1.0.0
 name: roadmap
 description: |
   ISO 27001:2022 Implementation Roadmap — converts gap, annex, and risk treatment

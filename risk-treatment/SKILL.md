@@ -1,4 +1,5 @@
 ---
+version: 1.0.0
 name: risk-treatment
 description: |
   ISO 27001:2022 Risk Treatment — Clause 6.1.3 compliant.
